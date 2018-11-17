@@ -1,0 +1,49 @@
+version: "3.7"
+
+volumes:
+  data:
+  datalog:
+
+services:
+  zookeeper:
+    image: "zookeeper"
+    restart: always
+    hostname: zookeeper
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888
+    volumes:
+      - "data:/data"
+      - "datalog:/datalog"
+      - "./zookeeper/zoo.cfg:/conf/zoo.cfg"
+
+  kafka:
+    build: "./kafka"
+    restart: always
+    hostname: kafka
+    volumes:
+      - "./kafka/server.properties:/usr/local/kafka/config/server.properties"
+    ports:
+      - 9092:9092
+
+  producer:
+    build: "./node"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - "./src/:/home/node/app/src/"
+      - "./tsconfig.json:/home/node/app/tsconfig.json"
+    command: "npx ts-node src/producer.ts"
+
+  consumer:
+    build: "./node"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - "./src/:/home/node/app/src/"
+      - "./tsconfig.json:/home/node/app/tsconfig.json"
+    command: "npx ts-node src/consumer.ts"
