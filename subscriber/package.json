@@ -1,15 +1,17 @@
 {
-  "name": "cqrs-query",
+  "name": "cqrs-subscriber",
   "version": "1.0.0",
-  "description": "",
+  "description": "The subscriber takes incoming events and updates the read model in MongoDB",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node query.ts"
+    "start": "ts-node subscriber.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/mongodb": "^3.1.14",
+    "mongodb": "^3.1.10",
     "node-rdkafka": "^2.4.2"
   },
   "devDependencies": {
