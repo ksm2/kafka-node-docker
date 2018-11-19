@@ -1,54 +1,55 @@
 import CreateIssueEvent from 'cqrs-common/lib/events/CreateIssueEvent'
 import Kafka from 'node-rdkafka'
+import express from 'express'
+import bodyParser from 'body-parser'
 
-console.log(Kafka.features)
-console.log(Kafka.librdkafkaVersion)
+const EXPRESS_PORT = 8081
+const EXPRESS_HOSTNAME = 'command.local'
 
+// Create Kafka Producer
 const producer = new Kafka.Producer({
-  'client.id': 'my-node-producer',
+  'client.id': 'node-command1',
   'metadata.broker.list': 'kafka.local:9092',
-  // 'compression.codec': 'gzip',
-  // 'retry.backoff.ms': 200,
-  // 'message.send.max.retries': 10,
-  // 'socket.keepalive.enable': true,
-  // 'queue.buffering.max.messages': 100000,
-  // 'queue.buffering.max.ms': 1000,
-  // 'batch.num.messages': 1000000,
+  'compression.codec': 'gzip',
+  'retry.backoff.ms': 200,
+  'message.send.max.retries': 10,
+  'socket.keepalive.enable': true,
+  'queue.buffering.max.messages': 100_000,
+  'queue.buffering.max.ms': 0,
+  'batch.num.messages': 1_000_000,
   'dr_cb': true,
 }, {})
 
+// Poll for events every 100 ms
+producer.setPollInterval(100)
+
 producer.connect()
 
-const message: CreateIssueEvent = {
-  type: 'create-issue',
-  id: '',
-  title: 'Create event sourcing application on ' + new Date(),
+// Create react app
+const app = express()
+
+app.use(bodyParser.json())
+
+function produce(data): boolean {
+  const message = Buffer.from(JSON.stringify(data))
+  return producer.produce('events', null, message)
 }
 
-producer.on('ready', () => {
-  try {
-    producer.produce(
-      // Topic to send the message to
-      'events',
-      // optionally we can manually specify a partition for the message
-      // this defaults to -1 - which will use librdkafka's default partitioner (consistent random for keyed messages, random for unkeyed messages)
-      null,
-      // Message to send. Must be a buffer
-      Buffer.from(JSON.stringify(message)),
-      // for keyed messages, we also specify the key - note that this field is optional
-      // 'Stormwind',
-      // you can send a timestamp here. If your broker version supports it,
-      // it will get added. Otherwise, we default to 0
-      // Date.now(),
-      // you can send an opaque token here, which gets passed along
-      // to your delivery reports
-    )
+app.post('/', (req, res) => {
+  const event = req.body
+  const { type, ...params } = event
 
-    producer.flush(500, () => producer.disconnect())
-  } catch (err) {
-    console.error('A problem occurred when sending our message')
-    console.error(err)
-  }
+  const success = produce(event)
+  res.send({ event: type, success })
+
+  console.log(`${type} - ${JSON.stringify(params)}`)
+})
+
+// Wait for the app to be ready
+producer.on('ready', () => {
+  app.listen(EXPRESS_PORT, EXPRESS_HOSTNAME, () => {
+    console.info(`Listening on POST http://${EXPRESS_HOSTNAME}:${EXPRESS_PORT}/`)
+  })
 })
 
 // Any errors we encounter, including connection errors
@@ -57,8 +58,7 @@ producer.on('event.error', (err) => {
   console.error(err)
 })
 
+// Report of delivery statistics here
 producer.on('delivery-report', function (err, report) {
-  // Report of delivery statistics here:
-  //
-  console.log(report)
+  console.log('Report', report)
 })

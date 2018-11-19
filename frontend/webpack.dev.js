@@ -12,6 +12,12 @@ module.exports = merge(common, {
     contentBase: './dist',
     historyApiFallback: true,
     hot: true,
+    proxy: {
+      '/commands': {
+        target: 'http://command.local:8081',
+        pathRewrite: { '^/commands': '' },
+      },
+    },
   },
 
   module: {
