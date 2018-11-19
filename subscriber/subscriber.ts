@@ -25,20 +25,21 @@ async function consume() {
 
   consumer.on('data', async (data) => {
     const event = JSON.parse(data.value.toString())
-    console.log('Incoming event', event)
     if (!isEvent(event)) {
       console.log('No event')
       return
     }
 
+    const { type, ...params } = event
+    console.info(`IN ${type} - ${JSON.stringify(params)}`)
     if (isCreateIssueEvent(event)) {
-      console.log('issue stored');
       await issueCollection.insertOne({
         _id: event.id,
         title: event.title
       })
 
-      consumer.commit()
+      consumer.commitMessage(data)
+      console.info(`OK ${type}`);
     }
   })
 

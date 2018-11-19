@@ -1,10 +1,10 @@
-import CreateIssueEvent from 'cqrs-common/lib/events/CreateIssueEvent'
-import Kafka from 'node-rdkafka'
-import express from 'express'
 import bodyParser from 'body-parser'
+import express from 'express'
+import Kafka from 'node-rdkafka'
 
 const EXPRESS_PORT = 8081
 const EXPRESS_HOSTNAME = 'command.local'
+const KAFKA_TIMEOUT = 60_000
 
 // Create Kafka Producer
 const producer = new Kafka.Producer({
@@ -30,19 +30,34 @@ const app = express()
 
 app.use(bodyParser.json())
 
-function produce(data): boolean {
-  const message = Buffer.from(JSON.stringify(data))
-  return producer.produce('events', null, message)
+function produce(data): Promise<boolean> {
+  return new Promise<boolean>((resolve, reject) => {
+    const message = Buffer.from(JSON.stringify(data))
+    const result = producer.produce('events', null, message)
+
+    producer.flush(KAFKA_TIMEOUT, (err) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(result)
+      }
+    })
+  })
 }
 
-app.post('/', (req, res) => {
+app.post('/', async (req, res) => {
   const event = req.body
   const { type, ...params } = event
 
-  const success = produce(event)
-  res.send({ event: type, success })
+  try {
+    const success = await produce(event)
+    res.send({ event: type, success })
+  } catch (error) {
+    res.status(512)
+    res.send({ type, error })
+  }
 
-  console.log(`${type} - ${JSON.stringify(params)}`)
+  console.info(`${res.statusCode} ${type} - ${JSON.stringify(params)}`)
 })
 
 // Wait for the app to be ready
