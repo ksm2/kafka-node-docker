@@ -1,11 +1,10 @@
 {
-  "name": "KafkaTryout",
+  "name": "cqrs-command",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "producer": "ts-node src/producer.ts",
-    "consumer": "ts-node src/consumer.ts"
+    "start": "ts-node command.ts"
   },
   "keywords": [],
   "author": "",

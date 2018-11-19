@@ -1,0 +1,53 @@
+{
+  "name": "cqrs-frontend",
+  "version": "1.0.0",
+  "description": "Example CQRS frontend",
+  "main": "index.js",
+  "scripts": {
+    "watch": "webpack-dev-server --open --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Konstantin Möllers <ksm.moellers@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "node-r"
+    "normalize.css": "^8.0.0",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-router-dom": "^4.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.0",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-proposal-decorators": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.1.0",
+    "@types/react": "^16.4.14",
+    "@types/react-dom": "^16.0.7",
+    "@types/react-hot-loader": "^4.1.0",
+    "@types/react-router-dom": "^4.3.1",
+    "@types/webpack-env": "^1.13.6",
+    "babel-loader": "^8.0.2",
+    "clean-webpack-plugin": "^0.1.19",
+    "compression-webpack-plugin": "^2.0.0",
+    "css-hot-loader": "^1.4.2",
+    "css-loader": "^1.0.0",
+    "file-loader": "^2.0.0",
+    "fork-ts-checker-webpack-plugin": "^0.4.9",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.4.3",
+    "node-sass": "^4.9.3",
+    "react-hot-loader": "^4.3.11",
+    "redbox-react": "^1.6.0",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.0",
+    "typescript": "^3.0.3",
+    "typings-for-css-modules-loader": "^1.7.0",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.1",
+    "webpack-dev-server": "^3.1.9",
+    "webpack-merge": "^4.1.4"
+  }
+}
