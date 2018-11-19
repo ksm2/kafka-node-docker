@@ -2,7 +2,7 @@ import Kafka from 'node-rdkafka'
 
 const consumer = new Kafka.KafkaConsumer({
   'group.id': 'kafka',
-  'metadata.broker.list': 'kafka:9092',
+  'metadata.broker.list': 'kafka:29092',
 }, {})
 
 consumer.connect()

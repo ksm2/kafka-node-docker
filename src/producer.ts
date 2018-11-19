@@ -5,7 +5,7 @@ console.log(Kafka.librdkafkaVersion)
 
 const producer = new Kafka.Producer({
   'client.id': 'my-node-producer',
-  'metadata.broker.list': 'kafka:9092',
+  'metadata.broker.list': 'kafka:29092',
   // 'compression.codec': 'gzip',
   // 'retry.backoff.ms': 200,
   // 'message.send.max.retries': 10,
