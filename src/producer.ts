@@ -5,7 +5,7 @@ console.log(Kafka.librdkafkaVersion)
 
 const producer = new Kafka.Producer({
   'client.id': 'my-node-producer',
-  'metadata.broker.list': 'kafka:9092',
+  'metadata.broker.list': 'kafka1:9092,kafka2:9093,kafka3:9094',
   // 'compression.codec': 'gzip',
   // 'retry.backoff.ms': 200,
   // 'message.send.max.retries': 10,
@@ -30,10 +30,10 @@ producer.on('ready', () => {
         // Message to send. Must be a buffer
         Buffer.from('Awesome message'),
         // for keyed messages, we also specify the key - note that this field is optional
-        // 'Stormwind',
+        'Stormwind',
         // you can send a timestamp here. If your broker version supports it,
         // it will get added. Otherwise, we default to 0
-        // Date.now(),
+        Date.now(),
         // you can send an opaque token here, which gets passed along
         // to your delivery reports
       )

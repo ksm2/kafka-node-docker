@@ -5,45 +5,83 @@ volumes:
   datalog:
 
 services:
-  zookeeper:
-    image: "zookeeper"
+  zoo1:
+    image: zookeeper
     restart: always
-    hostname: zookeeper
+    hostname: zoo1
     ports:
-      - 2181:2181
-      - 2888:2888
-      - 3888:3888
+    - 2181:2181
     environment:
       ZOO_MY_ID: 1
-      ZOO_SERVERS: server.1=0.0.0.0:2888:3888
-    volumes:
-      - "data:/data"
-      - "datalog:/datalog"
-      - "./zookeeper/zoo.cfg:/conf/zoo.cfg"
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
 
-  kafka:
+  zoo2:
+    image: zookeeper
+    restart: always
+    hostname: zoo2
+    ports:
+    - 2182:2181
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=0.0.0.0:2888:3888 server.3=zoo3:2888:3888
+
+  zoo3:
+    image: zookeeper
+    restart: always
+    hostname: zoo3
+    ports:
+    - 2183:2181
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=0.0.0.0:2888:3888
+
+  kafka1:
     build: "./kafka"
     restart: always
-    hostname: kafka
+    hostname: kafka1
     volumes:
-      - "./kafka/server.properties:/usr/local/kafka/config/server.properties"
+      - "./kafka/server-1.properties:/usr/local/kafka/config/server.properties"
     ports:
       - 9092:9092
 
-  producer:
-    build: "./node"
-    environment:
-      - NODE_ENV=production
+  kafka2:
+    build: "./kafka"
+    restart: always
+    hostname: kafka2
     volumes:
-      - "./src/:/home/node/app/src/"
-      - "./tsconfig.json:/home/node/app/tsconfig.json"
-    command: "npx ts-node src/producer.ts"
+      - "./kafka/server-2.properties:/usr/local/kafka/config/server.properties"
+    ports:
+      - 9093:9093
 
-  consumer:
-    build: "./node"
-    environment:
-      - NODE_ENV=production
+  kafka3:
+    build: "./kafka"
+    restart: always
+    hostname: kafka3
     volumes:
-      - "./src/:/home/node/app/src/"
-      - "./tsconfig.json:/home/node/app/tsconfig.json"
-    command: "npx ts-node src/consumer.ts"
+      - "./kafka/server-3.properties:/usr/local/kafka/config/server.properties"
+    ports:
+      - 9094:9094
+
+#  producer:
+#    build: "./node"
+#    depends_on:
+#      - kafka1
+#      - kafka2
+#      - kafka3
+#    environment:
+#      - NODE_ENV=production
+#    volumes:
+#      - "./src/:/home/node/app/src/"
+#      - "./tsconfig.json:/home/node/app/tsconfig.json"
+#    command: "npx ts-node src/producer.ts"
+#
+#  consumer:
+#    build: "./node"
+#    depends_on:
+#      - producer
+#    environment:
+#      - NODE_ENV=production
+#    volumes:
+#      - "./src/:/home/node/app/src/"
+#      - "./tsconfig.json:/home/node/app/tsconfig.json"
+#    command: "npx ts-node src/consumer.ts"
