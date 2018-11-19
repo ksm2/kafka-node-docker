@@ -6,6 +6,8 @@
       <sourceFolder url="file://$MODULE_DIR$/frontend" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/query" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/command" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/common" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/subscriber" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

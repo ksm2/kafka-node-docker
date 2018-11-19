@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/mongodb": "^3.1.14",
+    "cqrs-common": "file:../common",
     "mongodb": "^3.1.10",
     "node-rdkafka": "^2.4.2"
   },

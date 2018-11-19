@@ -1,6 +1,6 @@
+import isCreateIssueEvent from 'cqrs-common/lib/helpers/isCreateIssueEvent'
+import isEvent from 'cqrs-common/lib/helpers/isEvent'
 import Kafka from 'node-rdkafka'
-import isCreateIssueEvent from "../helpers/isCreateIssueEvent"
-import isEvent from "../helpers/isEvent"
 import MongoClient from 'mongodb'
 
 const consumer = new Kafka.KafkaConsumer({
@@ -23,7 +23,7 @@ async function consume() {
     console.log('Consuming')
   })
 
-  consumer.on('data', (data) => {
+  consumer.on('data', async (data) => {
     const event = JSON.parse(data.value.toString())
     console.log('Incoming event', event)
     if (!isEvent(event)) {
@@ -33,10 +33,12 @@ async function consume() {
 
     if (isCreateIssueEvent(event)) {
       console.log('issue stored');
-      issueCollection.insertOne({
+      await issueCollection.insertOne({
         _id: event.id,
         title: event.title
       })
+
+      consumer.commit()
     }
   })
 

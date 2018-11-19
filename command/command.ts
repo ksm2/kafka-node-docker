@@ -1,5 +1,5 @@
+import CreateIssueEvent from 'cqrs-common/lib/events/CreateIssueEvent'
 import Kafka from 'node-rdkafka'
-import CreateIssueEvent from "../events/CreateIssueEvent"
 
 console.log(Kafka.features)
 console.log(Kafka.librdkafkaVersion)
@@ -19,10 +19,11 @@ const producer = new Kafka.Producer({
 
 producer.connect()
 
-const message = {
+const message: CreateIssueEvent = {
   type: 'create-issue',
+  id: '',
   title: 'Create event sourcing application on ' + new Date(),
-} as CreateIssueEvent
+}
 
 producer.on('ready', () => {
   try {
@@ -43,7 +44,7 @@ producer.on('ready', () => {
       // to your delivery reports
     )
 
-    producer.flush(500, () => producer.disconnect());
+    producer.flush(500, () => producer.disconnect())
   } catch (err) {
     console.error('A problem occurred when sending our message')
     console.error(err)
@@ -56,8 +57,8 @@ producer.on('event.error', (err) => {
   console.error(err)
 })
 
-producer.on('delivery-report', function(err, report) {
+producer.on('delivery-report', function (err, report) {
   // Report of delivery statistics here:
   //
-  console.log(report);
-});
+  console.log(report)
+})
