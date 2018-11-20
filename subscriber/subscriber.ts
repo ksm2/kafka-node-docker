@@ -3,24 +3,32 @@ import isEvent from 'cqrs-common/lib/helpers/isEvent'
 import Kafka from 'node-rdkafka'
 import MongoClient from 'mongodb'
 
+const ISSUE_KEY_ID = 0
+
 const consumer = new Kafka.KafkaConsumer({
   'group.id': 'kafka',
   'metadata.broker.list': 'kafka.local:9092',
 }, {})
 
 async function consume() {
-  const mongo = await MongoClient.connect('mongodb://mongo.local:27017')
+  const mongo = await MongoClient.connect('mongodb://mongo.local:27017/issue_system', { useNewUrlParser: true })
   const db = mongo.db('issue_system')
   const issueCollection = db.collection('issues')
+  const counters = db.collection('counters')
 
-  console.log(await issueCollection.find().toArray());
+  await issueCollection.deleteMany({})
+  await counters.deleteMany({})
 
+  await counters.insertOne({ _id: ISSUE_KEY_ID, value: 1 })
+
+  // Connect consumer to Kafka
   consumer.connect()
+
   consumer.on('ready', () => {
     consumer.subscribe(['events'])
 
     consumer.consume()
-    console.log('Consuming')
+    console.log('Consuming events from Kafka')
   })
 
   consumer.on('data', async (data) => {
@@ -33,8 +41,12 @@ async function consume() {
     const { type, ...params } = event
     console.info(`IN ${type} - ${JSON.stringify(params)}`)
     if (isCreateIssueEvent(event)) {
+      // Get next issue ID
+      const { value: { value: key } } = await counters.findOneAndUpdate({ _id: ISSUE_KEY_ID }, { $inc: { value: 1 } })
+
       await issueCollection.insertOne({
         _id: event.id,
+        key: `ISSUE-${key}`,
         title: event.title
       })
 
