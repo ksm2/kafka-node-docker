@@ -1,7 +1,8 @@
 import * as React from 'react'
-import { NavLink, Route } from 'react-router-dom'
+import { match, NavLink, Route } from 'react-router-dom'
 import Home from './Home'
 import { appContainer, menu, brand, footer } from './App.scss'
+import ViewIssue from './ViewIssue'
 
 export default class App extends React.Component {
   render() {
@@ -13,6 +14,7 @@ export default class App extends React.Component {
       </nav>
 
       <Route exact path="/" component={Home}/>
+      <Route path="/:issueKey" render={({ match }) => <ViewIssue issueKey={match.params.issueKey}/>}/>
 
       <footer className={footer}>
         Copyright © {year} Konstantin Möllers, all rights reserved.

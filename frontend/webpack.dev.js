@@ -17,6 +17,10 @@ module.exports = merge(common, {
         target: 'http://command.local:8081',
         pathRewrite: { '^/commands': '' },
       },
+      '/queries': {
+        target: 'http://query.local:8082',
+        pathRewrite: { '^/queries': '' },
+      },
     },
   },
 
