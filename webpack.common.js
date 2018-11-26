@@ -25,16 +25,8 @@ module.exports = {
         use: [
           { loader: 'css-hot-loader' },
           { loader: MiniCssExtractPlugin.loader },
-          {
-            loader: 'typings-for-css-modules-loader',
-            options: {
-              modules: true,
-              namedExport: true,
-              camelCase: true,
-              sourceMaps: true,
-            },
-          },
-          { loader: 'sass-loader', options: { sourceMaps: true } },
+          { loader: 'css-loader', options: { sourceMap: true } },
+          { loader: 'sass-loader', options: { sourceMap: true } },
         ],
       },
       {
