@@ -4,7 +4,8 @@
   "description": "Example CQRS frontend",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env DEBUG=query:*,command:*,subscriber:* concurrently --raw npm:watch npm:command npm:query npm:subscriber",
+    "start": "cross-env DEBUG=query:*,backend:*,command:*,subscriber:* concurrently --raw npm:watch npm:backend",
+    "backend": "ts-node --project tsconfig.commonjs.json --files backend/backend.ts",
     "command": "ts-node --project tsconfig.commonjs.json --files command/command.ts",
     "query": "ts-node --project tsconfig.commonjs.json --files query/query.ts",
     "subscriber": "ts-node --project tsconfig.commonjs.json --files subscriber/subscriber.ts",

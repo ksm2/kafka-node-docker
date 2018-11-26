@@ -1,5 +1,5 @@
 import * as React from 'react'
-import CreateIssueEvent from '../../common/events/CreateIssueEvent'
+import IssueCreatedEvent from '../../common/events/IssueCreatedEvent'
 import guid from '../../common/helpers/guid'
 import sendJSON from '../fetch/sendJSON'
 
@@ -17,7 +17,7 @@ export default class CreateIssue extends React.Component {
 
     const id = guid()
     const title = this.state.newTitle
-    const event: CreateIssueEvent = { type: 'create-issue', id, title }
+    const event: IssueCreatedEvent = { type: 'create-issue', id, title }
 
     await sendJSON('/commands/', event)
     this.setState({ newTitle: '' })

@@ -1,3 +1,2 @@
-export default interface Event {
-  type: string
+export default class Event {
 }

@@ -1,6 +1,6 @@
 import Event from '../events/Event'
-import RenameIssueEvent from '../events/RenameIssueEvent'
+import IssueRenamedEvent from '../events/IssueRenamedEvent'
 
-export default function isRenameIssueEvent(data: Event): data is RenameIssueEvent {
+export default function isRenameIssueEvent(data: Event): data is IssueRenamedEvent {
   return data.type === 'rename-issue'
 }
