@@ -1,6 +1,10 @@
 import bodyParser from 'body-parser'
+import debug from 'debug'
 import express, { NextFunction, Request, Response } from 'express'
 import { MongoClient } from 'mongodb'
+
+const info = debug('query:info')
+const error = debug('query:error')
 
 const EXPRESS_PORT = 8082
 const EXPRESS_HOSTNAME = 'query.local'
@@ -11,7 +15,7 @@ class NotFoundError extends Error {
 }
 
 function logErrors(err: any, req: Request, res: Response, next: NextFunction) {
-  console.error(err.stack)
+  error(err)
   next(err)
 }
 
@@ -57,8 +61,8 @@ async function query() {
   app.use(errorHandler)
 
   app.listen(EXPRESS_PORT, EXPRESS_HOSTNAME, () => {
-    console.info(`Listening on GET http://${EXPRESS_HOSTNAME}:${EXPRESS_PORT}/`)
+    info(`Listening on GET http://${EXPRESS_HOSTNAME}:${EXPRESS_PORT}/`)
   })
 }
 
-query().catch(console.error)
+query().catch(error)

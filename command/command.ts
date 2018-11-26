@@ -1,6 +1,10 @@
 import bodyParser from 'body-parser'
+import debug from 'debug'
 import express from 'express'
 import Kafka from 'node-rdkafka'
+
+const info = debug('command:info')
+const error = debug('command:error')
 
 const EXPRESS_PORT = 8081
 const EXPRESS_HOSTNAME = 'command.local'
@@ -57,23 +61,22 @@ app.post('/', async (req, res) => {
     res.send({ type, error })
   }
 
-  console.info(`${res.statusCode} ${type} - ${JSON.stringify(params)}`)
+  info(`${res.statusCode} ${type} - ${JSON.stringify(params)}`)
 })
 
 // Wait for the app to be ready
 producer.on('ready', () => {
   app.listen(EXPRESS_PORT, EXPRESS_HOSTNAME, () => {
-    console.info(`Listening on POST http://${EXPRESS_HOSTNAME}:${EXPRESS_PORT}/`)
+    info(`Listening on POST http://${EXPRESS_HOSTNAME}:${EXPRESS_PORT}/`)
   })
 })
 
 // Any errors we encounter, including connection errors
 producer.on('event.error', (err) => {
-  console.error('Error from producer')
-  console.error(err)
+  error('Error from producer: %o', err)
 })
 
 // Report of delivery statistics here
 producer.on('delivery-report', function (err, report) {
-  console.log('Report', report)
+  info('Report, %o', report)
 })

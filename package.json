@@ -4,7 +4,7 @@
   "description": "Example CQRS frontend",
   "main": "index.js",
   "scripts": {
-    "start": "npm run watch",
+    "start": "cross-env DEBUG=query:*,command:*,subscriber:* concurrently --raw npm:watch npm:command npm:query npm:subscriber",
     "command": "ts-node --project tsconfig.commonjs.json --files command/command.ts",
     "query": "ts-node --project tsconfig.commonjs.json --files query/query.ts",
     "subscriber": "ts-node --project tsconfig.commonjs.json --files subscriber/subscriber.ts",
@@ -16,6 +16,8 @@
   "license": "ISC",
   "dependencies": {
     "babel-polyfill": "^6.26.0",
+    "concurrently": "^4.1.0",
+    "debug": "^4.1.0",
     "express": "^4.16.4",
     "mongodb": "^3.1.10",
     "node-rdkafka": "^2.4.2",
@@ -43,6 +45,7 @@
     "babel-loader": "^8.0.4",
     "clean-webpack-plugin": "^0.1.19",
     "compression-webpack-plugin": "^2.0.0",
+    "cross-env": "^5.2.0",
     "css-hot-loader": "^1.4.2",
     "css-loader": "^1.0.0",
     "file-loader": "^2.0.0",

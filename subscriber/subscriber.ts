@@ -1,8 +1,12 @@
-import Kafka from 'node-rdkafka'
+import debug from 'debug'
 import MongoClient from 'mongodb'
+import Kafka from 'node-rdkafka'
 import Issue from '../common/aggregate/Issue'
 import isCreateIssueEvent from '../common/helpers/isCreateIssueEvent'
 import isEvent from '../common/helpers/isEvent'
+
+const info = debug('subscriber:info')
+const error = debug('subscriber:error')
 
 const ISSUE_KEY_ID = 0
 
@@ -29,18 +33,18 @@ async function consume() {
     consumer.subscribe(['events'])
 
     consumer.consume()
-    console.log('Consuming events from Kafka')
+    info('Consuming events from Kafka')
   })
 
   consumer.on('data', async (data) => {
     const event = JSON.parse(data.value.toString())
     if (!isEvent(event)) {
-      console.log('No event')
+      info('No event')
       return
     }
 
     const { type, ...params } = event
-    console.info(`IN ${type} - ${JSON.stringify(params)}`)
+    info(`IN ${type} - ${JSON.stringify(params)}`)
     if (isCreateIssueEvent(event)) {
       // Get next issue ID
       const { value: { value: key } } = await counters.findOneAndUpdate({ _id: ISSUE_KEY_ID }, { $inc: { value: 1 } })
@@ -53,15 +57,14 @@ async function consume() {
       await issueCollection.insertOne(issue)
 
       consumer.commitMessage(data)
-      console.info(`OK ${type}`);
+      info(`OK ${type}`);
     }
   })
 
   // Any errors we encounter, including connection errors
   consumer.on('event.error', (err) => {
-    console.error('Error from consumer')
-    console.error(err)
+    error(err)
   })
 }
 
-consume()
+consume().catch(error)
