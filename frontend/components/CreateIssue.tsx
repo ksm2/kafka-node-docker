@@ -1,6 +1,6 @@
-import CreateIssueEvent from 'cqrs-common/lib/events/CreateIssueEvent'
-import guid from 'cqrs-common/lib/helpers/guid'
 import * as React from 'react'
+import CreateIssueEvent from '../../common/events/CreateIssueEvent'
+import guid from '../../common/helpers/guid'
 import sendJSON from '../fetch/sendJSON'
 
 export default class CreateIssue extends React.Component {

@@ -30,12 +30,12 @@ const app = express()
 
 app.use(bodyParser.json())
 
-function produce(data): Promise<boolean> {
+function produce(data: any): Promise<boolean> {
   return new Promise<boolean>((resolve, reject) => {
     const message = Buffer.from(JSON.stringify(data))
     const result = producer.produce('events', null, message)
 
-    producer.flush(KAFKA_TIMEOUT, (err) => {
+    producer.flush(KAFKA_TIMEOUT, (err?: Error) => {
       if (err) {
         reject(err)
       } else {

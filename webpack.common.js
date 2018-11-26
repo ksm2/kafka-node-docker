@@ -4,7 +4,7 @@ const TypeScriptCheckerPlugin = require('fork-ts-checker-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
-  entry: './src/main',
+  entry: './frontend/main',
 
   output: {
     publicPath: '/',
@@ -55,9 +55,9 @@ module.exports = {
     new CleanPlugin(['./dist/']),
 
     new HTMLPlugin({
-      template: './src/index.html',
+      template: './frontend/index.html',
       inject: true,
-      favicon: './src/favicon.png',
+      favicon: './frontend/favicon.png',
       minify: {
         collapseWhitespace: true,
       },

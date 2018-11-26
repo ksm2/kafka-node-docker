@@ -1,12 +1,12 @@
-import Issue from 'cqrs-common/lib/aggregate/Issue'
 import * as React from 'react'
 import { Link } from 'react-router-dom'
+import Issue from '../../common/aggregate/Issue'
 import receiveJSON from '../fetch/receiveJSON'
 import CreateIssue from './CreateIssue'
 
 export default class Home extends React.Component {
   state = {
-    issues: [] as Issue[]
+    issues: [] as Issue[],
   }
 
   async componentDidMount() {
@@ -23,10 +23,10 @@ export default class Home extends React.Component {
 
       <h2>Issues</h2>
       <ul>
-      {this.state.issues.map(issue =>
-        <li key={issue._id}>
-          <Link to={issue.key}>{issue.key}: {issue.title}</Link>
-        </li>)}
+        {this.state.issues.map(issue =>
+          <li key={issue._id}>
+            <Link to={issue.key}>{issue.key}: {issue.title}</Link>
+          </li>)}
       </ul>
     </main>
   }

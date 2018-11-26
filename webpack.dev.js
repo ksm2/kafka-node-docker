@@ -12,6 +12,7 @@ module.exports = merge(common, {
     contentBase: './dist',
     historyApiFallback: true,
     hot: true,
+    port: 8080,
     proxy: {
       '/commands': {
         target: 'http://command.local:8081',

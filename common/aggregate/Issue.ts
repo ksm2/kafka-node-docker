@@ -1,4 +1,5 @@
 export default interface Issue {
-  id: string
+  _id: string
+  key: string
   title: string
 }

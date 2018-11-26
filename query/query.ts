@@ -1,5 +1,5 @@
 import bodyParser from 'body-parser'
-import express from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import { MongoClient } from 'mongodb'
 
 const EXPRESS_PORT = 8082
@@ -10,12 +10,12 @@ class NotFoundError extends Error {
   status = 404
 }
 
-function logErrors(err, req, res, next) {
+function logErrors(err: any, req: Request, res: Response, next: NextFunction) {
   console.error(err.stack)
   next(err)
 }
 
-function errorHandler(err, req, res, next) {
+function errorHandler(err: any, req: Request, res: Response, next: NextFunction) {
   const status = err.status || 500
   res.status(status)
   res.send({ status, error: err.message })

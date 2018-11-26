@@ -1,7 +1,8 @@
-import isCreateIssueEvent from 'cqrs-common/lib/helpers/isCreateIssueEvent'
-import isEvent from 'cqrs-common/lib/helpers/isEvent'
 import Kafka from 'node-rdkafka'
 import MongoClient from 'mongodb'
+import Issue from '../common/aggregate/Issue'
+import isCreateIssueEvent from '../common/helpers/isCreateIssueEvent'
+import isEvent from '../common/helpers/isEvent'
 
 const ISSUE_KEY_ID = 0
 
@@ -44,11 +45,12 @@ async function consume() {
       // Get next issue ID
       const { value: { value: key } } = await counters.findOneAndUpdate({ _id: ISSUE_KEY_ID }, { $inc: { value: 1 } })
 
-      await issueCollection.insertOne({
+      const issue: Issue = {
         _id: event.id,
         key: `ISSUE-${key}`,
         title: event.title
-      })
+      }
+      await issueCollection.insertOne(issue)
 
       consumer.commitMessage(data)
       console.info(`OK ${type}`);
